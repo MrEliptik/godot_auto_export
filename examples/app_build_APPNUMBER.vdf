@@ -1,0 +1,14 @@
+"AppBuild"
+{
+	"AppID" "APP_ID" // Your AppID
+	"Desc" "Automatic build" // internal description for this build
+	"Preview" "0"
+	"ContentRoot" "" // content root folder relative to this script file
+	"BuildOutput" "..\output" // output folder relative to this script file
+	"Depots"
+	{
+		// file mapping instructions for each depot are in separate script files
+		"DEPOT_NUMBER_1" "depot_build_DEPOT_NUMBER_1.vdf"
+		"DEPOT_NUMBER_1" "depot_build_DEPOT_NUMBER_2.vdf"
+	}
+}
