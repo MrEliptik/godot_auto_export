@@ -16,7 +16,7 @@ steam_app_script = ''
 steam_credentials_path = 'steam_credentials.txt'
 
 build_path = 'build/'
-game_name = 'colorspace'
+game_name = 'game_name'
 exe_name_windows = game_name+'.exe'
 exe_name_linux = game_name+'.x86_64'
 
@@ -108,8 +108,23 @@ def upload_steam(zip_files, steam_credentials):
         # Move zip to content folder
         if 'Linux' in zip:
             shutil.copy(zip, steam_content_path_linux)
+            # Extract zip as we can't upload a zip to steam
+            # We can make that better by copying the files instead of the zip.. this is a quick fix
+            with zipfile.ZipFile(zip,"r") as zip_ref:
+                zip_ref.extractall(steam_content_path_linux)
+            #Go through files to delete the zip
+            for file in os.listdir(steam_content_path_linux):
+                if file.endswith((".zip")):
+                    print("|---> Deleting: " + file)
+                    os.remove(os.path.join(steam_content_path_linux, file))
         if 'Windows' in zip:
             shutil.copy(zip, steam_content_path_win)
+            with zipfile.ZipFile(zip,"r") as zip_ref:
+                zip_ref.extractall(steam_content_path_win)
+            for file in os.listdir(steam_content_path_win):
+                if file.endswith((".zip")):
+                    print("|---> Deleting: " + file)
+                    os.remove(os.path.join(steam_content_path_win, file))
 
     # Execute steam cmd
     cmd = [steamcmd_path, '+login', steam_credentials[0], steam_credentials[1], '+run_app_build_http', steam_app_script, '+quit']
@@ -121,14 +136,12 @@ def upload_steam(zip_files, steam_credentials):
 
     # Delete zips after upload
     for file in os.listdir(steam_content_path_win):
-        if file.endswith((".zip")):
-            print("|---> Deleting: " + file)
-            os.remove(os.path.join(steam_content_path_win, file))
+        print("|---> Deleting: " + file)
+        os.remove(os.path.join(steam_content_path_win, file))
     
     for file in os.listdir(steam_content_path_linux):
-        if file.endswith((".zip")):
-            print("|---> Deleting: " + file)
-            os.remove(os.path.join(steam_content_path_linux, file))
+        print("|---> Deleting: " + file)
+        os.remove(os.path.join(steam_content_path_linux, file))
 
 def read_steam_credentials():
     credentials = []
